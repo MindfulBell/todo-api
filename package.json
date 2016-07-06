@@ -4,7 +4,6 @@
   "description": "todo-API built for a Udemy course",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "author": "Tim Bell (c/o Rob Percival)",
