@@ -1,5 +1,5 @@
 {
-  "name": "todo-api",
+  "name": "tb-todo-api",
   "version": "1.0.0",
   "description": "todo-API built for a Udemy course",
   "main": "server.js",
