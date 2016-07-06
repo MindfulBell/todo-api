@@ -1,6 +1,9 @@
 const express = require('express');
-let app = express();
 const PORT = process.env.PORT || 8080;
+const favicon = require('serve-favicon');
+
+let app = express();
+app.use(favicon(__dirname + '/public/favicon.ico'))
 
 app.get('/', (req, res)=>{
 	res.send('Todo API Root');
