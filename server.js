@@ -6,7 +6,7 @@ let app = express();
 app.use(favicon(__dirname + '/public/favicon.ico'))
 
 app.get('/', (req, res)=>{
-	res.send('Todo API Root');
+	res.send('Todo API Root Bacon');
 })
 
 app.listen(PORT, (req, res)=>{
