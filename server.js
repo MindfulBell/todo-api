@@ -1,24 +1,14 @@
 const express = require('express');
 const PORT = process.env.PORT || 8080;
 const favicon = require('serve-favicon');
-const todos = [{
-	id: 1,
-	description: "Meet Jess for stuff",
-	completed: false,
-},
-{
-	id: 2,
-	description: "Eat food",
-	completed: false
-},
-{
-	id: 3,
-	description: "Play videogames",
-	completed: true
-}];
+const bodyParser = require('body-parser');
+
+let todos = [];
+let todoNextId = 1;
 
 let app = express();
 app.use(favicon(__dirname + '/public/favicon.ico'))
+app.use(bodyParser.json());
 
 app.get('/', (req, res)=>{
 	res.send('Todo API Root Bacon');
@@ -43,6 +33,18 @@ app.get('/todos/:id', (req, res)=>{
 		res.json(todo)
 	}
 })
+
+//POST
+
+app.post('/todos', (req, res)=>{
+	let body = req.body;
+
+	body.id = todoNextId++;
+	todos.push(body)
+
+	res.json(body);
+})
+
 
 app.listen(PORT, (req, res)=>{
 	console.log(`Listening on PORT ${PORT}`)
