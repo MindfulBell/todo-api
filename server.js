@@ -63,6 +63,37 @@ app.delete('/todos/:id', (req, res)=>{
 	}
 })
 
+// PUT
+
+app.put('/todos/:id', (req, res)=>{
+	let body = _.pick(req.body, "description", "completed");
+	let validAttributes = {};
+	const id = parseInt(req.params.id);
+	let todo = _.findWhere(todos, {id});
+
+	if (!todo) {
+		return res.status(404).send();
+	}
+
+	if (body.hasOwnProperty("completed") && _.isBoolean(body.completed)) {
+		validAttributes.completed = body.completed
+	}
+	else if (body.hasOwnProperty('completed')) {
+		return res.status(400).send();
+	}
+
+	if (body.hasOwnProperty("description") && _.isString(body.description) && body.description.trim().length > 0) {
+		validAttributes.description = body.description
+	}
+	else if (body.hasOwnProperty('description')) {
+		return res.status(400).send();
+	}
+
+	Object.assign(todo, validAttributes);
+	res.json(todo);
+
+})
+
 
 app.listen(PORT, (req, res)=>{
 	console.log(`Listening on PORT ${PORT}`)
