@@ -44,14 +44,17 @@ app.get('/todos', (req, res) => {
 //GET todos/:id
 app.get('/todos/:id', (req, res) => {
 	const id = parseInt(req.params.id);
-	let todo = _.findWhere(todos, {
-		id
+
+	db.todo.findById(id).then((todo)=>{
+		if (!!todo){
+			res.json(todo.toJSON())
+		}
+		else {
+			res.status(404).send();
+		}		
+	}).catch((e)=>{
+		res.status(500).json(e);
 	})
-	if (!todo) {
-		res.status(404).send("No matching id found...");
-	} else {
-		res.json(todo)
-	}
 })
 
 //POST
@@ -63,16 +66,6 @@ app.post('/todos', (req, res) => {
 	}).catch((e) => {
 		res.status(400).json(e);
 	})
-
-	/*	if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
-			return res.status(400).send();
-		}
-		body.description = body.description.trim();
-		body.id = todoNextId++;
-
-		todos.push(body)
-
-		res.json(body);*/
 })
 
 // DELETE
