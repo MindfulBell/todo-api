@@ -48,6 +48,21 @@ app.post('/todos', (req, res)=>{
 	res.json(body);
 })
 
+// DELETE
+
+app.delete('/todos/:id', (req, res)=>{
+	const id = parseInt(req.params.id);
+	let todo = _.findWhere(todos, {id});
+
+	if (!todo){
+		res.status(404).send("Could not find todo to delete...")
+	}
+	else {
+		todos = _.without(todos, todo);
+		res.json(todo);
+	}
+})
+
 
 app.listen(PORT, (req, res)=>{
 	console.log(`Listening on PORT ${PORT}`)
