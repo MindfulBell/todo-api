@@ -3,6 +3,7 @@ const PORT = process.env.PORT || 8080;
 const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
 const _ = require('underscore');
+const db = require('./db.js');
 
 let todos = [];
 let todoNextId = 1;
@@ -57,15 +58,21 @@ app.get('/todos/:id', (req, res) => {
 app.post('/todos', (req, res) => {
 	let body = _.pick(req.body, "description", "completed");
 
-	if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
-		return res.status(400).send();
-	}
-	body.description = body.description.trim();
-	body.id = todoNextId++;
+	db.todo.create(body).then((todo) => {
+		res.status(200).json(todo.toJSON())
+	}).catch((e) => {
+		res.status(400).json(e);
+	})
 
-	todos.push(body)
+	/*	if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
+			return res.status(400).send();
+		}
+		body.description = body.description.trim();
+		body.id = todoNextId++;
 
-	res.json(body);
+		todos.push(body)
+
+		res.json(body);*/
 })
 
 // DELETE
@@ -115,7 +122,8 @@ app.put('/todos/:id', (req, res) => {
 
 })
 
-
-app.listen(PORT, (req, res) => {
-	console.log(`Listening on PORT ${PORT}`)
+db.sequelize.sync().then(() => {
+	app.listen(PORT, (req, res) => {
+		console.log(`Listening on PORT ${PORT}`)
+	})
 })
