@@ -22,16 +22,20 @@ app.get('/todos', (req, res) => {
 	let query = req.query;
 	var where = {};
 
-	if (query.hasOwnProperty("completed")){
+	if (query.hasOwnProperty("completed")) {
 		where.completed = query.completed === "true" ? true : false;
 	}
-	if (query.hasOwnProperty("q") && query.q.trim().length > 0){
-		where.description = { $like: `%${query.q.trim()}%` }
+	if (query.hasOwnProperty("q") && query.q.trim().length > 0) {
+		where.description = {
+			$like: `%${query.q.trim()}%`
+		}
 	}
-
-	db.todo.findAll({where}).then((todos)=>{
-			res.json(todos)		
-	}).catch((e)=>{
+	
+	db.todo.findAll({
+		where
+	}).then((todos) => {
+		res.json(todos)
+	}).catch((e) => {
 		res.status(500).send();
 	})
 })
@@ -40,14 +44,13 @@ app.get('/todos', (req, res) => {
 app.get('/todos/:id', (req, res) => {
 	const id = parseInt(req.params.id);
 
-	db.todo.findById(id).then((todo)=>{
-		if (!!todo){
+	db.todo.findById(id).then((todo) => {
+		if (!!todo) {
 			res.json(todo.toJSON())
-		}
-		else {
+		} else {
 			res.status(404).send();
-		}		
-	}).catch((e)=>{
+		}
+	}).catch((e) => {
 		res.status(500).json(e);
 	})
 })
