@@ -103,16 +103,16 @@ app.put('/todos/:id', (req, res) => {
 
 	db.todo.findById(id).then((todo) => {
 		if (todo) {
-			return todo.update(attributes);
+			todo.update(attributes).then((todo) => {
+				res.json(todo.toJSON());
+			}, (e) => {
+				res.status(400).json(e);
+			})
 		} else {
 			res.status(404).send();
 		}
 	}, () => {
 		res.status(500).send();
-	}).then((todo) => {
-		res.json(todo.toJSON());
-	}, (e) => {
-		res.status(400).json(e);
 	})
 })
 
