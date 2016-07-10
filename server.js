@@ -30,7 +30,7 @@ app.get('/todos', (req, res) => {
 			$like: `%${query.q.trim()}%`
 		}
 	}
-	
+
 	db.todo.findAll({
 		where
 	}).then((todos) => {
@@ -70,16 +70,22 @@ app.post('/todos', (req, res) => {
 
 app.delete('/todos/:id', (req, res) => {
 	const id = parseInt(req.params.id);
-	let todo = _.findWhere(todos, {
-		id
-	});
 
-	if (!todo) {
-		res.status(404).send("Could not find todo to delete...")
-	} else {
-		todos = _.without(todos, todo);
-		res.json(todo);
-	}
+	db.todo.destroy({
+		where: {
+			id
+		}
+	}).then((rowsDeleted) => {
+		if (rowsDeleted === 0) {
+			return res.status(404).json({
+				error: 'No todo with id'
+			});
+		} else {
+			res.status(204).send();
+		}
+	}).catch((e) => {
+		res.status(500).json(e);
+	})
 })
 
 // PUT
