@@ -4,7 +4,8 @@
   "description": "todo-API built for a Udemy course",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "eslint src"
   },
   "engines": {
     "node": "6.2.2"
@@ -22,6 +23,8 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
+    "babel-eslint": "^6.1.2",
+    "eslint": "^3.0.1",
     "nodemon": "^1.9.2"
   }
 }
