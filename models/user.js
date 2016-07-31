@@ -1,8 +1,8 @@
-var bcrypt = require('bcryptjs');
-var _ = require('underscore');
+const bcrypt = require('bcryptjs');
+const _ = require('underscore');
 
-module.exports = function (sequelize, DataTypes) {
-	return sequelize.define('user', {
+module.exports = function(sequelize, DataTypes) {
+	let user = sequelize.define('user', {
 		email: {
 			type: DataTypes.STRING,
 			allowNull: false,
@@ -23,7 +23,7 @@ module.exports = function (sequelize, DataTypes) {
 			validate: {
 				len: [7, 100]
 			},
-			set: function(value){
+			set: function(value) {
 				let salt = bcrypt.genSaltSync(10);
 				let hashedPassword = bcrypt.hashSync(value, salt);
 
@@ -38,11 +38,34 @@ module.exports = function (sequelize, DataTypes) {
 				user.email = typeof user.email === 'string' ? user.email.toLowerCase() : user.email;
 			}
 		},
+		classMethods: {
+			authenticate: function(body) {
+				return new Promise(function(resolve, reject) {
+					if (typeof body.email !== 'string' || typeof body.password !== 'string') {
+						return reject();
+					}
+
+					user.findOne({
+						where: {
+							email: body.email
+						}
+					}).then((user) => {
+						if (!user || !bcrypt.compareSync(body.password, user.get('password_hash'))) {
+							return reject();
+						}
+						resolve(user);
+					}, (e) => {
+						reject();
+					});
+				});
+			}
+		},
 		instanceMethods: {
-			toPublicJSON: function () {
+			toPublicJSON: function() {
 				let json = this.toJSON();
 				return _.pick(json, 'id', 'email', 'createdAt', 'updatedAt')
 			}
 		}
-	})
+	});
+	return user;
 }

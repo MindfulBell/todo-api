@@ -4,6 +4,7 @@ const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
 const _ = require('underscore');
 const db = require('./db.js');
+const bcrypt = require('bcryptjs');
 
 let todos = [];
 let todoNextId = 1;
@@ -129,7 +130,19 @@ app.post('/users', (req, res) => {
 
 });
 
-db.sequelize.sync().then(() => {
+//POST /users/login
+
+app.post('/users/login', (req, res) => {
+	let body = _.pick(req.body, 'email', 'password');
+
+	db.user.authenticate(body).then((user) => {
+		res.json(user.toPublicJSON());
+	},(e) => {
+		res.status(401).send();
+	})
+})
+
+db.sequelize.sync({force: true}).then(() => {
 	app.listen(PORT, (req, res) => {
 		console.log(`Listening on PORT ${PORT}`)
 	})
