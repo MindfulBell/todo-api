@@ -22,10 +22,10 @@ app.get('/todos', (req, res) => {
 	let query = req.query;
 	var where = {};
 
-	if (query.hasOwnProperty("completed")) {
-		where.completed = query.completed === "true" ? true : false;
+	if (query.hasOwnProperty('completed')) {
+		where.completed = query.completed === 'true' ? true : false;
 	}
-	if (query.hasOwnProperty("q") && query.q.trim().length > 0) {
+	if (query.hasOwnProperty('q') && query.q.trim().length > 0) {
 		where.description = {
 			$like: `%${query.q.trim()}%`
 		}
@@ -57,7 +57,7 @@ app.get('/todos/:id', (req, res) => {
 
 //POST
 app.post('/todos', (req, res) => {
-	let body = _.pick(req.body, "description", "completed");
+	let body = _.pick(req.body, 'description', 'completed');
 
 	db.todo.create(body).then((todo) => {
 		res.status(200).json(todo.toJSON())
@@ -90,14 +90,14 @@ app.delete('/todos/:id', (req, res) => {
 // PUT
 app.put('/todos/:id', (req, res) => {
 	const id = parseInt(req.params.id);
-	let body = _.pick(req.body, "description", "completed");
+	let body = _.pick(req.body, 'description', 'completed');
 	let attributes = {};
 
-	if (body.hasOwnProperty("completed")) {
+	if (body.hasOwnProperty('completed')) {
 		attributes.completed = body.completed
 	}
 
-	if (body.hasOwnProperty("description")) {
+	if (body.hasOwnProperty('description')) {
 		attributes.description = body.description
 	}
 
@@ -115,6 +115,19 @@ app.put('/todos/:id', (req, res) => {
 		res.status(500).send();
 	})
 })
+
+// USER POST
+
+app.post('/users', (req, res) => {
+	let body = _.pick(req.body, 'email', 'password');
+
+	db.user.create(body).then((user)=>{
+		res.json(user.toJSON());
+	}, (e)=>{
+		res.status(400).json(e);
+	});
+	
+});
 
 db.sequelize.sync().then(() => {
 	app.listen(PORT, (req, res) => {
