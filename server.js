@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const _ = require('underscore');
 const db = require('./db.js');
 const bcrypt = require('bcryptjs');
+const middleware = require('./middleware.js')(db);
 
 let todos = [];
 let todoNextId = 1;
@@ -19,7 +20,7 @@ app.get('/', (req, res) => {
 
 // GET /todos?completed=true&q=ass
 
-app.get('/todos', (req, res) => {
+app.get('/todos', middleware.requireAuthentication, (req, res) => {
 	let query = req.query;
 	var where = {};
 
@@ -42,7 +43,7 @@ app.get('/todos', (req, res) => {
 })
 
 //GET todos/:id
-app.get('/todos/:id', (req, res) => {
+app.get('/todos/:id', middleware.requireAuthentication, (req, res) => {
 	const id = parseInt(req.params.id);
 
 	db.todo.findById(id).then((todo) => {
@@ -57,7 +58,7 @@ app.get('/todos/:id', (req, res) => {
 })
 
 //POST
-app.post('/todos', (req, res) => {
+app.post('/todos', middleware.requireAuthentication, (req, res) => {
 	let body = _.pick(req.body, 'description', 'completed');
 
 	db.todo.create(body).then((todo) => {
@@ -68,7 +69,7 @@ app.post('/todos', (req, res) => {
 })
 
 // DELETE
-app.delete('/todos/:id', (req, res) => {
+app.delete('/todos/:id', middleware.requireAuthentication, (req, res) => {
 	const id = parseInt(req.params.id);
 
 	db.todo.destroy({
@@ -89,7 +90,7 @@ app.delete('/todos/:id', (req, res) => {
 })
 
 // PUT
-app.put('/todos/:id', (req, res) => {
+app.put('/todos/:id', middleware.requireAuthentication, (req, res) => {
 	const id = parseInt(req.params.id);
 	let body = _.pick(req.body, 'description', 'completed');
 	let attributes = {};
